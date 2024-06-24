@@ -2,7 +2,7 @@ from models.ReservasDeViajes import ReservasDeViaje as ReservasDeViajeModel
 from schemas.ReservasDeViajeSchemas import ReservasDeViajeSchema
 
 
-class ReservasDeViaje():
+class ReservasDeViajeServices():
 
     def __init__(self, db) -> None:
         self.db = db
