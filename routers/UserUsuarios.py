@@ -38,7 +38,7 @@ def get_email_usuarios(email: str):
     return JSONResponse(status_code=200, content=jsonable_encoder(usuarios))
 
 @usuarios_router.post('/USUARIOS', tags=['Usuarios'])
-def create_usuarios(usuario):
+def create_usuarios(usuario: Usuarios):
     db = Session()
     usuarios = UsuariosServices(db).create_usuarios(usuario)
     if not usuarios:
@@ -46,7 +46,7 @@ def create_usuarios(usuario):
     return JSONResponse(status_code=200, content={"message": "Usuario creado con exito"})
 
 @usuarios_router.put('/USUARIOS', tags=['Usuarios'])
-def update_usuarios(id: int, usuario):
+def update_usuarios(id: int, usuario: Usuarios):
     db = Session()
     usuarios = UsuariosServices(db).update_usuarios(id, usuario)
     if not usuarios:
