@@ -1,0 +1,43 @@
+{% extends "Layout.html" %}
+
+
+{% block title %}Destinos{% endblock %}
+
+{% block content %}
+<h1>Destinations</h1>
+<input type="text" id="search-query" placeholder="Enter destination name or country">
+<button onclick="searchDestinations()">Search</button>
+<ul id="destinations-list"></ul>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    async function fetchDestinations() {
+        const response = await fetch('/destinations');
+        const destinations = await response.json();
+        const list = document.getElementById('destinations-list');
+        list.innerHTML = '';
+        destinations.forEach(destination => {
+            const listItem = document.createElement('li');
+            listItem.textContent = `${destination.name} - ${destination.description} (${destination.location})`;
+            list.appendChild(listItem);
+        });
+    }
+
+    async function searchDestinations() {
+        const query = document.getElementById('search-query').value;
+        const response = await fetch(`/search-destinations?query=${query}`);
+        const results = await response.json();
+        const list = document.getElementById('destinations-list');
+        list.innerHTML = '';
+        results.forEach(destination => {
+            const listItem = document.createElement('li');
+            listItem.textContent = `${destination.name} - ${destination.description} (${destination.location})`;
+            list.appendChild(listItem);
+        });
+    }
+
+    // Fetch all destinations on page load
+    fetchDestinations();
+</script>
+{% endblock %}

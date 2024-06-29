@@ -8,6 +8,7 @@ from routers.UserReservas import reservas_router
 from routers.UserUsuarios import usuarios_router
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Request
 
 app = FastAPI()
@@ -20,11 +21,24 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Configurar Jinja2Templates
 templates = Jinja2Templates(directory="Templates")
 
-@app.get("/")
+@app.get("/dashboard", response_class=HTMLResponse)
 async def read_dashboard(request: Request):
     return templates.TemplateResponse("Layout.html", {"request": request})
 
+@app.get("/destinos", response_class=HTMLResponse)
+async def read_destinations_page(request: Request):
+    return templates.TemplateResponse("destinos.html", {"request": request})
+
 app.add_middleware(ErrorHandler)
+## Acá con los CORS (Cross-Origin Resource Sharing)
+## defino todos los origenes que van a poder utitlizar/consultar el backend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], ##habilito el back para cualquier dominio que quiera consultar
+    allow_credentials=True,
+    allow_methods=["*"],##habilito todos los métodos HTTP( GET, POST, PUT, HEAD, OPTION, etc)
+    allow_headers=["*"],##habilito todos los headers que se puedan enviar desde un navegador.
+)
 app.include_router(destinos_router)
 app.include_router(paquetes_router)
 app.include_router(reservas_router)
