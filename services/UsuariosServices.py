@@ -23,7 +23,7 @@ class UsuariosServices():
         new_usuario = UsuariosModel(**usuario.dict())
         self.db.add(new_usuario)
         self.db.commit()
-        return
+        return new_usuario
     
     def update_usuarios(self, id: int, data: Usuarios):
         usuario = self.db.query(UsuariosModel).filter(UsuariosModel.id == id).first()
@@ -32,7 +32,7 @@ class UsuariosServices():
         usuario.password = data.password
         usuario.rol = data.rol
         self.db.commit()
-        return
+        return usuario
     
     def delete_usuarios(self, id: int):
         self.db.query(UsuariosModel).filter(UsuariosModel.id == id).delete()
