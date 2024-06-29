@@ -23,7 +23,7 @@ class DestinosServices():
         new_destino = DestinosModel(**destino.dict())
         self.db.add(new_destino)
         self.db.commit()
-        return
+        return new_destino
     
     def update_destinos(self, id: int, data: Destinos):
         destinos = self.db.query(DestinosModel).filter(DestinosModel.id == id).first()
@@ -31,7 +31,7 @@ class DestinosServices():
         destinos.descripcion = data.descripcion
         destinos.pais = data.pais
         self.db.commit()
-        return
+        return destinos
     
     def delete_destinos(self, id: int):
         self.db.query(DestinosModel).filter(DestinosModel.id == id).delete()

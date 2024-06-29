@@ -21,13 +21,17 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Configurar Jinja2Templates
 templates = Jinja2Templates(directory="Templates")
 
-@app.get("/dashboard", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse)
 async def read_dashboard(request: Request):
     return templates.TemplateResponse("Layout.html", {"request": request})
 
 @app.get("/destinos", response_class=HTMLResponse)
 async def read_destinations_page(request: Request):
     return templates.TemplateResponse("destinos.html", {"request": request})
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def read_destinations_page(request: Request):
+    return templates.TemplateResponse("dashboard.html", {"request": request})
 
 app.add_middleware(ErrorHandler)
 ## Acá con los CORS (Cross-Origin Resource Sharing)

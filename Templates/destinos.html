@@ -4,16 +4,21 @@
 {% block title %}Destinos{% endblock %}
 
 {% block content %}
-<h1>Destinations</h1>
-<input type="text" id="search-query" placeholder="Enter destination name or country">
-<button onclick="searchDestinations()">Search</button>
-<ul id="destinations-list"></ul>
+<div class="row">
+    <div class="col-12">
+        <h1>Buscar destinos</h1>
+        <input type="text" id="search-query" placeholder="Enter destination name or country">
+        <button onclick="searchDestinations()">Buscar</button>
+        <ul id="destinations-list"></ul>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
 <script>
     async function fetchDestinations() {
-        const response = await fetch('/destinations');
+        const response = await fetch('/destinos');
         const destinations = await response.json();
         const list = document.getElementById('destinations-list');
         list.innerHTML = '';
