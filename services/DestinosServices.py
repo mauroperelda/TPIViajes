@@ -1,5 +1,6 @@
 from models.Destinos import Destinos as DestinosModel
 from schemas.DestinosSchemas import Destinos 
+from typing import Optional, List
 
 
 class DestinosServices():
@@ -7,9 +8,13 @@ class DestinosServices():
     def __init__(self, db) -> None:
         self.db = db
 
-    def get_all_destinos(self):
-        destinos = self.db.query(DestinosModel).all()
-        return destinos
+    def get_all_destinos(self) -> List[DestinosModel]:
+        try:
+            destinos = self.db.query(DestinosModel).all()
+            return destinos
+        except Exception as e:
+            print(f"Error: {e}")
+            return[]
     
     def get_nombre_destinos(self, nombre):
         destinos = self.db.query(DestinosModel).filter(DestinosModel.nombre == nombre).first()
