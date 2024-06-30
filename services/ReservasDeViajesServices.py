@@ -19,7 +19,7 @@ class ReservasDeViajeServices():
         new_reserva = ReservasDeViajeModel(**reserva.dict())
         self.db.add(new_reserva)
         self.db.commit()
-        return
+        return new_reserva
     
     def update_reservas(self, id: int, data: ReservasDeViajeSchema):
         reserva = self.db.query(ReservasDeViajeModel).filter(ReservasDeViajeModel.id == id).first()
@@ -28,7 +28,7 @@ class ReservasDeViajeServices():
         reserva.fecha_reserva = data.fecha_reserva
         reserva.cantidad_personas = data.cantidad_personas
         self.db.commit()
-        return
+        return reserva
     
     def delete_reservas(self, id: int):
         self.db.query(ReservasDeViajeModel).filter(ReservasDeViajeModel.id == id).delete()

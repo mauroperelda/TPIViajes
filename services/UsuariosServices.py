@@ -1,5 +1,6 @@
 from models.Usuarios import Usuarios as UsuariosModel
-from schemas.UsuariosSchemas import Usuarios
+from schemas.UsuariosSchemas import UsuarioBase, CreateUsuario, UsuarioUpdate
+from Security.auth import GetPasswordHash
 
 
 class UsuariosServices():
@@ -19,13 +20,19 @@ class UsuariosServices():
         usuarios = self.db.query(UsuariosModel).filter(UsuariosModel.email == email).first()
         return usuarios
     
-    def create_usuarios(self, usuario: Usuarios):
-        new_usuario = UsuariosModel(**usuario.dict())
+    def create_usuarios(self, usuario: CreateUsuario):
+        hashed_password = GetPasswordHash(usuario.password)
+        new_usuario = UsuariosModel(
+            nombre= usuario.nombre,
+            email = usuario.email,
+            password = hashed_password,
+            rol = usuario.rol
+        )
         self.db.add(new_usuario)
         self.db.commit()
         return new_usuario
     
-    def update_usuarios(self, id: int, data: Usuarios):
+    def update_usuarios(self, id: int, data: UsuarioUpdate):
         usuario = self.db.query(UsuariosModel).filter(UsuariosModel.id == id).first()
         usuario.nombre = data.nombre
         usuario.email = data.email

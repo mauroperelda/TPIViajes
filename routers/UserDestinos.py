@@ -12,14 +12,14 @@ from schemas.DestinosSchemas import Destinos
 
 destinos_router = APIRouter()
 
-@destinos_router.get('/ALL-DESTINOS', tags=['Destinos'], response_model=List[Destinos], status_code=200, dependencies=[Depends(JWTBearer())])
-def get_all_destinos() -> List[Destinos]:
+@destinos_router.get('/ALL-DESTINOS', tags=['Destinos'], status_code=200, dependencies=[Depends(JWTBearer())])
+def get_all_destinos():
     db = Session()
     try:
         destinos = DestinosServices(db).get_all_destinos()
         return JSONResponse(status_code=200, content=jsonable_encoder(destinos))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, content={"message": "No se encontro ningun destino"})
 
 @destinos_router.get('/NOMBRE-DESTINOS', tags=['Destinos'], response_model=Destinos, status_code=200, dependencies=[Depends(JWTBearer())])
 def get_nom_destinos(nombre:str):

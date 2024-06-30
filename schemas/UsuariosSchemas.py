@@ -2,12 +2,23 @@ from pydantic import BaseModel, Field, EmailStr
 from typing import Optional
 
 
-class Usuarios(BaseModel):
-    id: Optional[int] = None
+class UsuarioBase(BaseModel):
+    #id: Optional[int] = None
     nombre: str = Field(min_length=2, max_length=20)
     email: EmailStr
-    password: str
+    # password: str
     rol: str
+
+class CreateUsuario(UsuarioBase):
+    password: str
+
+class UsuarioUpdate(UsuarioBase):
+    password: Optional[str] = None
+
+class Usuario(UsuarioBase):
+    id: int
+    class Config:
+        orm_mode = True
 
 #    class Config:
 #        schema_extra = {

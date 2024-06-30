@@ -8,7 +8,7 @@ class DestinosServices():
     def __init__(self, db) -> None:
         self.db = db
 
-    def get_all_destinos(self) -> List[DestinosModel]:
+    def get_all_destinos(self):
         try:
             destinos = self.db.query(DestinosModel).all()
             return destinos

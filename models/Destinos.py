@@ -6,7 +6,7 @@ class Destinos(Base):
 
     __tablename__ = "Destinos"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(50))
     descripcion = Column(String(70))
     pais = Column(String(30))

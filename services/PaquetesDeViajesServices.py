@@ -12,16 +12,15 @@ class PaqueteDeViajesServices():
         paquetes = self.db.query(PaquetesDeViajeModel).all()
         return paquetes
 
-    def get_destino_paqueteDeViaje(self, destino):
-        paqueteDeViaje = self.db.query(PaquetesDeViajeModel).filter(PaquetesDeViajeModel.destinoId == destino).first()
-        #PREGUNTAR SI TIENE QUE TRAER EL NOMBRE DEL DESTINO O EL ID
+    def get_destino_paqueteDeViaje(self, destinoId: int):
+        paqueteDeViaje = self.db.query(PaquetesDeViajeModel).filter(PaquetesDeViajeModel.destinoId == destinoId).first()
         return paqueteDeViaje
     
     def create_paquete(self, paquete: PaquetesDeViaje):
         new_paquete = PaquetesDeViajeModel(**paquete.dict())
         self.db.add(new_paquete)
         self.db.commit()
-        return
+        return new_paquete
     
     def update_paquete(self, id: int, data: PaquetesDeViaje):
         paquete = self.db.query(PaquetesDeViajeModel).filter(PaquetesDeViajeModel.id == id).first()
@@ -32,7 +31,7 @@ class PaqueteDeViajesServices():
         paquete.fecha_inicio = data.fecha_inicio
         paquete.fecha_fin = data.fecha_fin
         self.db.commit()
-        return
+        return paquete
     
     def delete_paquete(self, id: int):
         self.db.query(PaquetesDeViajeModel).filter(PaquetesDeViajeModel.id == id).delete()
