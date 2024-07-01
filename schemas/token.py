@@ -15,4 +15,4 @@ class Token(BaseModel):
 
 # Modelo para el token de datos
 class TokenData(BaseModel):
-    username: str | None = None
+    username: Optional[str] = None

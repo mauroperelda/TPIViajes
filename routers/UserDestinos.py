@@ -40,22 +40,14 @@ def search_destinos(query: str):
         return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder(destinos))
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-# @destinos_router.get('/NOMBRE-DESTINOS', tags=['Destinos'], response_model=Destinos, status_code=200, dependencies=[Depends(JWTBearer())])
-# def get_nom_destinos(nombre:str):
-#     db = Session()
-#     destinos = DestinosServices(db).get_nombre_destinos(nombre)
-#     if not destinos:
-#         return JSONResponse(status_code=404, content={"message": "Nombre de destino no encontrado"})
-#     return JSONResponse(status_code=200, content=jsonable_encoder(destinos))
 
-# @destinos_router.get('/PAIS-DESTINOS', tags=['Destinos'], response_model=Destinos, status_code=200, dependencies=[Depends(JWTBearer())])
-# def get_pais_destinos(pais:str):
-#     db = Session()
-#     destinos = DestinosServices(db).get_pais_destinos(pais)
-#     if not destinos:
-#         return JSONResponse(status_code=404, content={"message": "Destinos de ese pais no encontrados"})
-#     return JSONResponse(status_code=200, content=jsonable_encoder(destinos))
-
+@destinos_router.get('/total-destinos', tags=['Dashboard'], status_code=status.HTTP_200_OK)
+def get_total_destinos():
+    db = Session()
+    total_destinos_count = DestinosServices(db).get_total_destinos()
+    if not total_destinos_count:
+        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"message": "No hay destinos"})
+    return JSONResponse(status_code=status.HTTP_200_OK, content={"total_destinos": total_destinos_count})
 
 @destinos_router.post('/DESTINOS_CREATE', tags=['Destinos'], response_model=Destinos, status_code=200)
 def create_destinos(destino: Destinos):

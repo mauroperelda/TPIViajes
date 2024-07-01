@@ -21,6 +21,15 @@ def get_all_usuarios():
         return JSONResponse(status_code=404, content={"message": "No se encontro ningun usuario"})
     return JSONResponse(status_code=200, content=jsonable_encoder(usuarios))
 
+@usuarios_router.get('/usuario-mas-reservas', tags=['Dashboard'])
+def get_usuario_mas_reservas():
+    db = Session()
+    usuario_mas_reservas = UsuariosServices(db).get_usuario_mas_reservas()
+    if usuario_mas_reservas:
+        usuario = db.query(UsuariosModel).filter(UsuariosModel.id == usuario_mas_reservas[0]).first()
+        return {"usuario_id": usuario.id, "total_reservas": usuario_mas_reservas.total, "nombre_usuario": usuario.nombre}
+    return {"message": "No hay reservas"}
+
 @usuarios_router.get('/ID-USUARIOS', tags=['Usuarios'])
 def get_id_usuarios(id: int):
     db = Session()

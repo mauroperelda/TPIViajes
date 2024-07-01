@@ -3,8 +3,111 @@
 {% block content %}
 <div class="row">
     <div class="col-12">
+        <div class="row">
+            <div class="col-12">
+                <div class="card widget-inline">
+                    <div class="card-body p-0">
+                        <div class="row g-0">
+                            <div class="col-sm-6 col-lg-3">
+                                <div class="card shadow-none m-0">
+                                    <div class="card-body text-center">
+                                        <i class="dripicons-briefcase text-muted" style="font-size: 24px;"></i>
+                                        <h3 id="total-destinos"><span></span></h3>
+                                        <p class="text-muted font-15 mb-0">Total Destinos</p>
+                                    </div>
+                                </div>
+                            </div>
 
+                            <div class="col-sm-6 col-lg-3">
+                                <div class="card shadow-none m-0 border-start">
+                                    <div class="card-body text-center">
+                                        <i class="dripicons-checklist text-muted" style="font-size: 24px;"></i>
+                                        <h3 id="total-reservas"><span>0</span></h3>
+                                        <p class="text-muted font-15 mb-0">Total Reservas</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-lg-3">
+                                <div class="card shadow-none m-0 border-start">
+                                    <div class="card-body text-center">
+                                        <i class="dripicons-user-group text-muted" style="font-size: 24px;"></i>
+                                        <h3 id="usuario-mas-reservas"><span></span></h3>
+                                        <p class="text-muted font-15 mb-0">Usuario con mas Reservas</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-lg-3">
+                                <div class="card shadow-none m-0 border-start">
+                                    <div class="card-body text-center">
+                                        <i class="dripicons-graph-line text-muted" style="font-size: 24px;"></i>
+                                        <h3><span></span> <i class="mdi mdi-arrow-up text-success"></i></h3>
+                                        <p class="text-muted font-15 mb-0">Paquete mas reservado</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div> <!-- end row -->
+                    </div>
+                </div> <!-- end card-box-->
+            </div> <!-- end col-->
+        </div>
+        <!-- end row-->
     </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchTotalDestinos();
+        fetchTotalReservas();
+        fetchUsuarioMasReservas();
+        // fetchPaqueteMasReservado();
+    });
+
+    async function fetchTotalDestinos() {
+        debugger;
+        try {
+            const response = await fetch('/api/total-destinos');
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Error fetching total destinos:', errorData.message);
+                return;
+            }
+            const data = await response.json();
+            document.querySelector('#total-destinos span').textContent = data.total_destinos;
+        } catch (error) {
+            console.error('Error fetching total destinos:', error);
+        }
+    }
+
+    async function fetchTotalReservas() {
+        debugger;
+        try {
+            const response = await fetch('/api/total-reservas');
+            const data = await response.json();
+            document.querySelector('#total-reservas span').textContent = data.total_reservas;
+        } catch (error) {
+            console.error('Error fetching total reservas:', error);
+        }
+    }
+
+    async function fetchUsuarioMasReservas() {
+        debugger;
+        try {
+            const response = await fetch('/api/usuario-mas-reservas');
+            const data = await response.json();
+            if (data.message) {
+                document.querySelector('#usuario-mas-reservas span').textContent = data.message;
+            } else {
+                document.querySelector('#usuario-mas-reservas span').textContent = data.nombre_usuario;
+            }
+        } catch (error) {
+            console.error('Error fetching usuario mas reservas:', error);
+        }
+    }
+</script>
 {% endblock %}

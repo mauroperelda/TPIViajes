@@ -20,6 +20,13 @@ class UsuariosServices():
         usuarios = self.db.query(UsuariosModel).filter(UsuariosModel.email == email).first()
         return usuarios
     
+    def get_usuario_mas_reservas(self):
+        usuario_mas_reservas = (db.query(ReservasDeViajeModel.usuarioId, func.count(ReservasDeViajeModel.id).label('total'))
+            .group_by(ReservasDeViajeModel.usuarioId)
+            .order_by(func.count(ReservasDeViajeModel.id).desc())
+            .first())
+        return usuario_mas_reservas
+    
     def create_usuarios(self, usuario: CreateUsuario):
         hashed_password = GetPasswordHash(usuario.password)
         new_usuario = UsuariosModel(

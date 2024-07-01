@@ -24,6 +24,10 @@ class DestinosServices():
         destinos = self.db.query(DestinosModel).filter(DestinosModel.pais == pais).first()
         return destinos
     
+    def get_total_destinos(self):
+        total_destinos = self.db.query(DestinosModel).count()
+        return total_destinos
+    
     def create_destinos(self, destino: Destinos):
         new_destino = DestinosModel(**destino.dict())
         self.db.add(new_destino)

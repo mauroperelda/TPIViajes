@@ -9,6 +9,7 @@ from fastapi.encoders import jsonable_encoder
 from middlewares.jwt_bearer import JWTBearer
 from services.ReservasDeViajesServices import ReservasDeViajeServices
 from schemas.ReservasDeViajeSchemas import ReservasDeViajeSchema
+from Security import auth
 
 reservas_router = APIRouter()
 
@@ -21,12 +22,29 @@ def get_all_reservas():
     return JSONResponse(status_code=200, content=jsonable_encoder(reservas))
 
 @reservas_router.get('/ACT-RESERVA', tags=['Reservas'])
-def get_act_reservas(id: int):
+def get_act_reservas(user = Depends(auth.GetCurrentUser)):
     db = Session()
-    reservas = ReservasDeViajeServices(db).get_act_reservas(id)
+    reservas = ReservasDeViajeServices(db).get_act_reservas(user.id)
     if not reservas:
-        return JSONResponse(status_code=404, content={"message": "No se encontro ninguna reserva activa con ese id"})
-    return JSONResponse(status_code=200, content=jsonable_encoder(reservas))
+        return JSONResponse(status_code=404, content={"message": f"No se encontro ninguna reserva activa"})
+    
+    reservas_new = [
+        {
+            "id": reserva[0].id,
+            "paqueteId": reserva[0].paqueteId,
+            "nombre_paquete": reserva[1],
+            "fecha_reserva": reserva[0].fecha_reserva,
+            "cantidad_personas": reserva[0].cantidad_personas
+        }
+        for reserva in reservas
+    ]
+    return JSONResponse(status_code=200, content=jsonable_encoder(reservas_new))
+
+@reservas_router.get('/total-reservas', tags=['Dashboard'])
+def get_total_reservas():
+    db = Session()
+    total_reservas = ReservasDeViajeServices(db).get_total_reservas()
+    return {"total_reservas": total_reservas}
 
 @reservas_router.post('/RESERVAS', tags=['Reservas'])
 def create_reservas(reserva: ReservasDeViajeSchema):

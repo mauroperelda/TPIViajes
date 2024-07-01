@@ -1,4 +1,5 @@
 from models.ReservasDeViajes import ReservasDeViaje as ReservasDeViajeModel
+from models.PaquetesDeViajes import PaquetesDeViajes as PaquetesDeViajeModel
 from schemas.ReservasDeViajeSchemas import ReservasDeViajeSchema
 
 
@@ -11,8 +12,16 @@ class ReservasDeViajeServices():
         reservas = self.db.query(ReservasDeViajeModel).all()
         return reservas
 
+    def get_total_reservas(self):
+        reservas_count = self.db.query(ReservasDeViajeModel).count()
+        return reservas_count
+    
     def get_act_reservas(self, id):
-        reservasAct = self.db.query(ReservasDeViajeModel).filter(ReservasDeViajeModel.usuarioId == id).first()
+        reservasAct = (
+            self.db.query(ReservasDeViajeModel, PaquetesDeViajeModel.nombre)
+            .join(PaquetesDeViajeModel, ReservasDeViajeModel.paqueteId == PaquetesDeViajeModel.id)
+            .filter(ReservasDeViajeModel.usuarioId == id).all()
+        )
         return reservasAct
 
     def create_reservas(self, reserva: ReservasDeViajeSchema):
