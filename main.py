@@ -42,8 +42,16 @@ async def read_destinos(request: Request):
     return templates.TemplateResponse("destinos.html", {"request": request})
 
 @app.get("/dashboard", response_class=HTMLResponse)
-async def read_dashboard(current_user: User = Depends(auth.GetCurrentUser)):
-    return templates.TemplateResponse("dashboard.html", {"request": request, "user": current_user})
+async def read_dashboard(request : Request):
+    return templates.TemplateResponse("dashboard.html", {"request": request})
+
+@app.get("/paquetes", response_class=HTMLResponse)
+async def read_dashboard(request : Request):
+    return templates.TemplateResponse("paquetes.html", {"request": request})
+
+@app.get("/reservas_activas", response_class=HTMLResponse)
+async def read_dashboard(request : Request):
+    return templates.TemplateResponse("reservas_activas.html", {"request": request})
 
 app.add_middleware(ErrorHandler)
 ## Acá con los CORS (Cross-Origin Resource Sharing)
@@ -56,9 +64,9 @@ app.add_middleware(
     allow_headers=["*"],##habilito todos los headers que se puedan enviar desde un navegador.
 )
 app.include_router(auth_router)
-app.include_router(destinos_router)
-app.include_router(paquetes_router)
-app.include_router(reservas_router)
+app.include_router(destinos_router, prefix="/api")
+app.include_router(paquetes_router, prefix="/api")
+app.include_router(reservas_router, prefix="/api")
 app.include_router(usuarios_router)
 
 

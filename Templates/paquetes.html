@@ -1,0 +1,65 @@
+{% extends "Layout.html" %}
+
+
+{% block title %}Destinos{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <label for="simpleinput" class="form-label">Buscar paquetes por destino</label>
+        <div class="input-group">
+            <input type="text" class="form-control" id="search-query" placeholder="Ingrese destino">
+            <button type="button" class="btn btn-primary" onclick="searchPaquetes()">Buscar</button>
+        </div>
+    </div>
+</div>
+
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Cupo</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha Fin</th>
+            <!-- <th>Destino</th> -->
+        </tr>
+    </thead>
+    <tbody id="paquetes-destinos">
+    </tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+<script>
+        async function searchPaquetes() {
+        debugger;
+        try {
+            const query = document.getElementById('search-query').value;
+            const response = await fetch(`api/DESTINO-PAQUETE?destino=${query}`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                alert(`Error: ${errorData.message}`);
+                return;
+            }
+            const results = await response.json();
+            const list = document.getElementById('paquetes-destinos');
+            list.innerHTML = '';
+            results.forEach(paquete => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${paquete.nombre}</td>
+                    <td>${paquete.precio}</td>
+                    <td>${paquete.cupo}</td>
+                    <td>${paquete.fecha_inicio}</td>
+                    <td>${paquete.fecha_fin}</td>
+                `;
+                list.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error buscando paquetes:', error);
+            alert('Error al buscar paquetes');
+        }
+    }
+</script>
+{% endblock %}

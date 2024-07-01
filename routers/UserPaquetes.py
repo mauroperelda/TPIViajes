@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from fastapi import Depends, Path, Query
+from fastapi import Depends, Path, Query, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from typing import Optional, List
@@ -21,12 +21,12 @@ def get_all_paquetes():
         return JSONResponse(status_code=404, content={"message": "Paquetes no encontrados"})
     return JSONResponse(status_code=200, content=jsonable_encoder(paquetes))
 
-@paquetes_router.get('/DESTINO-PAQUETE', tags=['Paquetes'], status_code=200, dependencies=[Depends(JWTBearer())])
-def get_destino_paquete(destinoId:int):
+@paquetes_router.get('/DESTINO-PAQUETE', tags=['Paquetes'], status_code=200)
+def get_destino_paquete(destino: str):
     db = Session()
-    paquete = PaqueteDeViajesServices(db).get_destino_paqueteDeViaje(destinoId)
+    paquete = PaqueteDeViajesServices(db).get_destino_paqueteDeViaje(destino)
     if not paquete:
-        return JSONResponse(status_code=404, content={"message": "Paquete de viaje con ese destino NO ENCONTRADO"})
+        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": "Paquete de viaje con ese destino NO ENCONTRADO"})
     return JSONResponse(status_code=200, content=jsonable_encoder(paquete))
 
 @paquetes_router.post('/PAQUETES', tags=['Paquetes'])

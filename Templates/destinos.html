@@ -5,41 +5,149 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-12">
-        <h1>Buscar destinos</h1>
-        <input class="col-md-6" type="text" id="search-query" placeholder="Ingrese nombre o pais para la busqueda">
-        <button onclick="searchDestinations()">Buscar</button>
-        <ul id="destinations-list"></ul>
+    <div class="col-md-4">
+        <label for="simpleinput" class="form-label">Buscar destino</label>
+        <div class="input-group">
+            <input type="text" class="form-control" id="search-query" placeholder="Ingrese nombre o país">
+            <button type="button" class="btn btn-primary" onclick="searchDestinations()">Buscar</button>
+        </div>
     </div>
 </div>
+
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>País</th>
+        </tr>
+    </thead>
+    <tbody id="destinos-list">
+    </tbody>
+</table>
+<!-- <ul id="destinos-list"></ul> -->
+
+
+<!-- Standard modal -->
+<div class="position-absolute top-0 end-0 mt-5 me-5">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#standard-modal">Nuevo Destino</button>
+</div>
+
+<div id="standard-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="standard-modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="standard-modalLabel">Crear Nuevo Destino</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" placeholder="Ingrese el nombre del destino">
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <input type="text" class="form-control" id="descripcion" placeholder="Ingrese la descripción del destino">
+                    </div>
+                    <div class="mb-3">
+                        <label for="pais" class="form-label">País</label>
+                        <input type="text" class="form-control" id="pais" placeholder="Ingrese el país del destino">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="saveNewDestination()">Guardar Cambios</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 {% endblock %}
 
 {% block scripts %}
 <script>
     async function fetchDestinations() {
-        const response = await fetch('/destinos');
-        const destinations = await response.json();
-        const list = document.getElementById('destinations-list');
-        list.innerHTML = '';
-        destinations.forEach(destination => {
-            const listItem = document.createElement('li');
-            listItem.textContent = `${destination.name} - ${destination.description} (${destination.location})`;
-            list.appendChild(listItem);
-        });
+        debugger;
+        try {
+            const response = await fetch('api/ALL-DESTINOS');
+            if (!response.ok) {
+                throw new Error('Error al obtener destinos');
+            }
+            const destinosJson = await response.json();
+            const list = document.getElementById('destinos-list');
+            list.innerHTML = '';
+            destinosJson.forEach(destino => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${destino.nombre}</td>
+                    <td>${destino.descripcion}</td>
+                    <td>${destino.pais}</td>
+                `;
+                list.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error fetching destinations:', error);
+            alert('Error al obtener destinos');
+        }
     }
 
     async function searchDestinations() {
-        const query = document.getElementById('search-query').value;
-        const response = await fetch(`/search-destinations?query=${query}`);
-        const results = await response.json();
-        const list = document.getElementById('destinations-list');
-        list.innerHTML = '';
-        results.forEach(destination => {
-            const listItem = document.createElement('li');
-            listItem.textContent = `${destination.name} - ${destination.description} (${destination.location})`;
-            list.appendChild(listItem);
-        });
+        debugger;
+        try {
+            const query = document.getElementById('search-query').value;
+            const response = await fetch(`/api/search-destinos?query=${query}`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                alert(`Error: ${errorData.message}`);
+                return;
+            }
+            const results = await response.json();
+            const list = document.getElementById('destinos-list');
+            list.innerHTML = '';
+            results.forEach(destino => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${destino.nombre}</td>
+                    <td>${destino.descripcion}</td>
+                    <td>${destino.pais}</td>
+                `;
+                list.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error buscando destinos:', error);
+            alert('Error al buscar destinos');
+        }
+    }
+
+    async function saveNewDestination() {
+        try {
+            const nombre = document.getElementById('nombre').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const pais = document.getElementById('pais').value;
+
+            const response = await fetch('http://localhost:8000/api/DESTINOS_CREATE', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ nombre, descripcion, pais })
+            });
+
+            if (response.ok) {
+                alert('Destino creado con éxito');
+                // Opcional: Actualizar la lista de destinos después de crear uno nuevo
+                fetchDestinations(); // Función que deberías tener definida para actualizar la lista de destinos
+                $('#standard-modal').modal('hide'); // Cerrar el modal después de crear el destino
+            } else {
+                const errorData = await response.json();
+                alert(`Error al crear destino: ${errorData.message}`);
+            }
+        } catch (error) {
+            console.error('Error creating destination:', error);
+            alert('Error al crear destino');
+        }
     }
 
     // Fetch all destinations on page load

@@ -3,7 +3,7 @@ from typing import Optional
 
 
 class Destinos(BaseModel):
-    id: int
+    # id: int
     nombre: str
     descripcion: str
     pais: str
