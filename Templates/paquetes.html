@@ -28,6 +28,54 @@
     <tbody id="paquetes-destinos">
     </tbody>
 </table>
+
+<!-- Standard modal -->
+<div class="position-absolute top-0 end-0 mt-5 me-5">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#standard-modal">Nuevo Paquete</button>
+</div>
+
+<div id="standard-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="standard-modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="standard-modalLabel">Crear Nuevo Paquete de viaje</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" placeholder="Ingrese el nombre del paquete">
+                    </div>
+                    <div class="mb-3">
+                        <label for="precio" class="form-label">Precio</label>
+                        <input type="text" class="form-control" id="precio" placeholder="Ingrese el precio del paquete">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cupo" class="form-label">Cupo</label>
+                        <input type="text" class="form-control" id="cupo" placeholder="Ingrese el cupo de pasajeros">
+                    </div>
+                    <div class="mb-3">
+                        <label for="fecha_inicio" class="form-label">Fecha Inicio</label>
+                        <input type="date" class="form-control" id="fecha_inicio">
+                    </div>
+                    <div class="mb-3">
+                        <label for="fecha_fin" class="form-label">Fecha Fin</label>
+                        <input type="date" class="form-control" id="fecha_fin">
+                    </div>
+                    <div class="mb-3">
+                        <label for="destinoNew" class="form-label">Destino</label>
+                        <input type="text" class="form-control" id="destinoNew" placeholder="Ingrese el destino">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="AddNewPaquete()">Guardar Cambios</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 {% endblock %}
 
 {% block scripts %}
@@ -59,6 +107,38 @@
         } catch (error) {
             console.error('Error buscando paquetes:', error);
             alert('Error al buscar paquetes');
+        }
+    }
+
+    async function AddNewPaquete(){
+        debugger;
+        try {
+            const nombre = document.getElementById('nombre').value;
+            const precio = document.getElementById('precio').value;
+            const cupo = document.getElementById('cupo').value.toString();
+            const fechaInicio = document.getElementById('fecha_inicio').value;
+            const fechaFin = document.getElementById('fecha_fin').value;
+            const destinoId = document.getElementById('destinoNew').value;
+
+            const response = await fetch('api/PAQUETES', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ nombre, precio, cupo, fechaInicio, fechaFin, destinoId })
+            });
+
+            if (response.ok) {
+                alert('Paquete creado con éxito');
+                $('#standard-modal').modal('hide'); // Cerrar el modal después de crear el destino
+            } else {
+                const errorData = await response.json();
+                alert(`Error al crear el paquete: ${errorData.message}`);
+            }
+        }
+        catch(error){
+            console.error('Error al guardar paquete:', error);
+            alert('Error al guardar paquete');
         }
     }
 </script>

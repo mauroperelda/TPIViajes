@@ -1,6 +1,8 @@
 from models.Usuarios import Usuarios as UsuariosModel
 from schemas.UsuariosSchemas import UsuarioBase, CreateUsuario, UsuarioUpdate
 from Security.auth import GetPasswordHash
+from models.ReservasDeViajes import ReservasDeViaje as ReservasDeViajeModel
+from sqlalchemy import func
 
 
 class UsuariosServices():
@@ -21,10 +23,12 @@ class UsuariosServices():
         return usuarios
     
     def get_usuario_mas_reservas(self):
-        usuario_mas_reservas = (db.query(ReservasDeViajeModel.usuarioId, func.count(ReservasDeViajeModel.id).label('total'))
+        usuario_mas_reservas = (
+            self.db.query(ReservasDeViajeModel.usuarioId, func.count(ReservasDeViajeModel.id).label('total'))
             .group_by(ReservasDeViajeModel.usuarioId)
             .order_by(func.count(ReservasDeViajeModel.id).desc())
-            .first())
+            .first()
+        )
         return usuario_mas_reservas
     
     def create_usuarios(self, usuario: CreateUsuario):

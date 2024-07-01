@@ -37,6 +37,15 @@ def create_paquetes(paquete: PaquetesDeViaje):
         return JSONResponse(status_code=500, content={"message": "Paquete no creeado"})
     return JSONResponse(status_code=200, content={"message": "Paquete creado con exito"})
 
+@paquetes_router.get('/paquete-mas-reservado', tags=['Dashboard'])
+def get_paquete_mas_reservado():
+    db = Session()
+    paquete_mas_reservado = PaqueteDeViajesServices(db).get_paquete_mas_reservado()
+    if paquete_mas_reservado:
+        paquete = db.query(PaquetesDeViajesModel).filter(PaquetesDeViajesModel.id == paquete_mas_reservado[0]).first()
+        return {"paquete_id": paquete.id, "total_reservas": paquete_mas_reservado.total, "nombre_paquete": paquete.nombre}
+    return {"message": "No hay reservas"}
+
 @paquetes_router.put('/PAQUETES', tags=['Paquetes'])
 def update_paquetes(id: int, paquete):
     db = Session()

@@ -1,6 +1,8 @@
 from models.PaquetesDeViajes import PaquetesDeViajes as PaquetesDeViajeModel
 from schemas.PaquetesDeViajesSchemas import PaquetesDeViaje
 from models.Destinos import Destinos as DestinosModel
+from sqlalchemy import func
+from models.ReservasDeViajes import ReservasDeViaje as ReservasDeViajeModel
  
 
 
@@ -19,6 +21,15 @@ class PaqueteDeViajesServices():
             paqueteDeViaje = self.db.query(PaquetesDeViajeModel).filter(PaquetesDeViajeModel.destinoId == destino.id).all()
             return paqueteDeViaje
         return []
+    
+    def get_paquete_mas_reservado(self):
+        paquete_mas_reservado = (
+            self.db.query(ReservasDeViajeModel.paqueteId, func.count(ReservasDeViajeModel.id).label('total'))
+            .group_by(ReservasDeViajeModel.paqueteId)
+            .order_by(func.count(ReservasDeViajeModel.id).desc())
+            .first()
+        )
+        return paquete_mas_reservado
     
     def create_paquete(self, paquete: PaquetesDeViaje):
         new_paquete = PaquetesDeViajeModel(**paquete.dict())

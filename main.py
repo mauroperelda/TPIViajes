@@ -68,7 +68,7 @@ app.include_router(auth_router)
 app.include_router(destinos_router, prefix="/api")
 app.include_router(paquetes_router, prefix="/api")
 app.include_router(reservas_router, prefix="/api")
-app.include_router(usuarios_router, prefix="/api")
+app.include_router(usuarios_router)
 
 
 Base.metadata.create_all(bind=engine)

@@ -4,7 +4,7 @@ from datetime import date
 
 class PaquetesDeViaje(BaseModel):
 
-    id: int
+    # id: int
     destinoId: int
     nombre: str
     precio: float

@@ -42,7 +42,7 @@
                                 <div class="card shadow-none m-0 border-start">
                                     <div class="card-body text-center">
                                         <i class="dripicons-graph-line text-muted" style="font-size: 24px;"></i>
-                                        <h3><span></span> <i class="mdi mdi-arrow-up text-success"></i></h3>
+                                        <h3 id="paquete-mas-reservado"><span></span></h3>
                                         <p class="text-muted font-15 mb-0">Paquete mas reservado</p>
                                     </div>
                                 </div>
@@ -65,7 +65,7 @@
         fetchTotalDestinos();
         fetchTotalReservas();
         fetchUsuarioMasReservas();
-        // fetchPaqueteMasReservado();
+        fetchPaqueteMasReservado();
     });
 
     async function fetchTotalDestinos() {
@@ -98,7 +98,7 @@
     async function fetchUsuarioMasReservas() {
         debugger;
         try {
-            const response = await fetch('/api/usuario-mas-reservas');
+            const response = await fetch('/usuario-mas-reservas');
             const data = await response.json();
             if (data.message) {
                 document.querySelector('#usuario-mas-reservas span').textContent = data.message;
@@ -107,6 +107,20 @@
             }
         } catch (error) {
             console.error('Error fetching usuario mas reservas:', error);
+        }
+    }
+
+    async function fetchPaqueteMasReservado() {
+        try {
+            const response = await fetch('/api/paquete-mas-reservado');
+            const data = await response.json();
+            if (data.message) {
+                document.querySelector('#paquete-mas-reservado span').textContent = data.message;
+            } else {
+                document.querySelector('#paquete-mas-reservado span').textContent = `${data.nombre_paquete} (${data.total_reservas})`;
+            }
+        } catch (error) {
+            console.error('Error fetching paquete mas reservado:', error);
         }
     }
 </script>
